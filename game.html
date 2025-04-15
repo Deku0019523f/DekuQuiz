@@ -1,0 +1,158 @@
+import { useEffect, useState } from "react";
+
+const questions = [
+  { question: "Quel est le plus grand océan du monde ?", answers: ["Atlantique", "Pacifique", "Indien", "Arctique"], correct: 1 },
+  { question: "Qui est le créateur de Naruto ?", answers: ["Akira Toriyama", "Eiichiro Oda", "Masashi Kishimoto", "Tite Kubo"], correct: 2 },
+  { question: "Quelle est la capitale du Canada ?", answers: ["Toronto", "Ottawa", "Vancouver", "Montréal"], correct: 1 },
+  { question: "Quel est le nom de l'épée de Trunks ?", answers: ["Z-Sword", "Katanas", "Epée du futur", "Tapion's Sword"], correct: 3 },
+  { question: "Dans One Piece, qui est le père de Luffy ?", answers: ["Barbe Blanche", "Dragon", "Shanks", "Ace"], correct: 1 },
+  { question: "Quelle est la formule chimique de l'eau ?", answers: ["H2", "HO2", "H2O", "O2H"], correct: 2 },
+  { question: "Qui est le 7e Hokage ?", answers: ["Naruto", "Kakashi", "Sasuke", "Tsunade"], correct: 0 },
+  { question: "Combien de continents y a-t-il ?", answers: ["5", "6", "7", "8"], correct: 2 },
+  { question: "Qui tue Goku la première fois dans Dragon Ball Z ?", answers: ["Cell", "Freezer", "Raditz", "Piccolo"], correct: 3 },
+  { question: "Dans SNK, qui détient le Titan Assaillant après Eren ?", answers: ["Armin", "Mikasa", "Jean", "Aucun"], correct: 3 },
+  { question: "Quel est l'auteur de One Piece ?", answers: ["Kishimoto", "Oda", "Toriyama", "Togashi"], correct: 1 },
+  { question: "Quelle est la planète la plus proche du Soleil ?", answers: ["Venus", "Terre", "Mars", "Mercure"], correct: 3 },
+  { question: "Dans Naruto, qui est le frère de Sasuke ?", answers: ["Naruto", "Itachi", "Kakashi", "Obito"], correct: 1 },
+  { question: "Qui a peint la Joconde ?", answers: ["Michel-Ange", "Raphaël", "Léonard de Vinci", "Donatello"], correct: 2 },
+  { question: "Quel fruit du démon possède Luffy ?", answers: ["Mera Mera", "Hito Hito", "Gomu Gomu", "Yami Yami"], correct: 2 },
+  { question: "Qui est le commandant du bataillon d’exploration dans SNK ?", answers: ["Erwin", "Jean", "Levi", "Connie"], correct: 0 },
+  { question: "Dans DBZ, comment s’appelle le fils de Vegeta ?", answers: ["Gohan", "Goten", "Trunks", "Broly"], correct: 2 },
+  { question: "Quelle est la capitale de l’Australie ?", answers: ["Sydney", "Canberra", "Melbourne", "Perth"], correct: 1 },
+  { question: "Qui est l’ami d’enfance de Luffy ?", answers: ["Zoro", "Usopp", "Sabo", "Shanks"], correct: 2 },
+  { question: "Qui possède le Byakugan ?", answers: ["Naruto", "Sasuke", "Hinata", "Shikamaru"], correct: 2 },
+  { question: "Quel est le plus long fleuve du monde ?", answers: ["Nil", "Amazon", "Yangtsé", "Mississippi"], correct: 1 },
+  { question: "Comment s’appelle la ville protégée par des murs dans SNK ?", answers: ["Eden", "Paradise", "Shiganshina", "Trost"], correct: 2 },
+  { question: "Combien de Dragon Balls existe-t-il ?", answers: ["5", "6", "7", "8"], correct: 2 },
+  { question: "Quel est l’élément chimique Fe ?", answers: ["Fer", "Fluor", "Phosphore", "Argon"], correct: 0 },
+  { question: "Qui est le Sensei de Naruto ?", answers: ["Iruka", "Kakashi", "Asuma", "Jiraya"], correct: 1 },
+  { question: "Quel est le chapeau de Luffy ?", answers: ["De cow-boy", "En métal", "De paille", "De pirate"], correct: 2 },
+  { question: "Qui est la princesse du clan Hyûga ?", answers: ["Tenten", "Sakura", "Hinata", "Ino"], correct: 2 },
+  { question: "Dans DBZ, quel est le nom du père de Goku ?", answers: ["Bardock", "Raditz", "Nappa", "Kakarot"], correct: 0 },
+  { question: "Quel est l’animal symbolique du Japon ?", answers: ["Chat", "Grue", "Tigre", "Cerf"], correct: 1 },
+  { question: "Qui est l’ennemi principal dans SNK à la fin ?", answers: ["Eren", "Levi", "Zeke", "Reiner"], correct: 0 },
+  { question: "Quel est le haki de Luffy ?", answers: ["Observation", "Armement", "Roi", "Les trois"], correct: 3 },
+  { question: "Combien de queues a Kurama ?", answers: ["5", "7", "9", "10"], correct: 2 },
+  { question: "Quelle est la devise de la France ?", answers: ["Liberté, égalité, fraternité", "Un pour tous", "Force et honneur", "Vive la république"], correct: 0 },
+  { question: "Quel personnage de DBZ devient Majin ?", answers: ["Vegeta", "Gohan", "Piccolo", "Goten"], correct: 0 },
+  { question: "Qui tue Itachi ?", answers: ["Naruto", "Kakashi", "Sasuke", "Pain"], correct: 2 },
+  { question: "Dans One Piece, que cherche l’équipage ?", answers: ["Le Trésor", "Le Nouveau Monde", "Le One Piece", "La vérité"], correct: 2 },
+  { question: "Qui est l’héritier du Titan Colossal ?", answers: ["Reiner", "Zeke", "Bertholdt", "Armin"], correct: 3 },
+  { question: "Quel est le pays le plus peuplé du monde ?", answers: ["Inde", "Chine", "USA", "Indonésie"], correct: 1 },
+  { question: "Quel ninja est spécialiste des insectes ?", answers: ["Kiba", "Shino", "Chôji", "Neji"], correct: 1 },
+  { question: "Combien de membres dans l’Akatsuki ?", answers: ["8", "9", "10", "11"], correct: 2 },
+  { question: "Qui est le roi des pirates ?", answers: ["Luffy", "Roger", "Shanks", "Teach"], correct: 1 },
+  { question: "Qui a créé les Dragon Balls ?", answers: ["Dieu", "Dende", "Namek", "Kami"], correct: 3 },
+  { question: "Comment s’appelle la mère de Naruto ?", answers: ["Kushina", "Tsunade", "Karin", "Mikoto"], correct: 0 },
+  { question: "Quel mur tombe en premier dans SNK ?", answers: ["Maria", "Rose", "Sina", "Trost"], correct: 0 },
+  { question: "Quelle est la technique ultime de Goku ?", answers: ["Kamehameha", "Kaioken", "Genkidama", "Ultra Instinct"], correct: 3 },
+  { question: "Quel chasseur de prime rejoint l’équipage de Luffy ?", answers: ["Sanji", "Zoro", "Usopp", "Franky"], correct: 1 },
+  { question: "Qui est l’auteur de SNK ?", answers: ["Oda", "Kishimoto", "Isayama", "Togashi"], correct: 2 },
+  { question: "Quel est le premier Hokage ?", answers: ["Tobirama", "Hashirama", "Hiruzen", "Danzo"], correct: 1 },
+  { question: "Qui est le frère de Gohan ?", answers: ["Trunks", "Goten", "Goku", "Pan"], correct: 1 },
+];
+
+export default function DefiDuJour() {
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [score, setScore] = useState(0);
+  const [timeLeft, setTimeLeft] = useState(1200); // 20 minutes
+  const [finished, setFinished] = useState(false);
+  const [answers, setAnswers] = useState([]);
+  const [playerName, setPlayerName] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+
+  useEffect(() => {
+    if (!finished && timeLeft > 0) {
+      const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
+      return () => clearTimeout(timer);
+    } else if (timeLeft === 0) {
+      setFinished(true);
+    }
+  }, [timeLeft, finished]);
+
+  function handleAnswer(index) {
+    const correct = questionsDefi[currentQuestion].correct;
+    if (index === correct) setScore(score + 1);
+    setAnswers([...answers, index]);
+    if (currentQuestion < questionsDefi.length - 1) {
+      setTimeout(() => setCurrentQuestion(currentQuestion + 1), 300);
+    } else {
+      setFinished(true);
+    }
+  }
+
+  function saveScore() {
+    if (!playerName.trim()) return;
+    const previous = JSON.parse(localStorage.getItem("classement_defi")) || [];
+    const updated = [...previous, {
+      name: playerName,
+      score,
+      date: new Date().toLocaleDateString(),
+    }];
+    localStorage.setItem("classement_defi", JSON.stringify(updated));
+    setSubmitted(true);
+  }
+
+  if (finished) {
+    const message = score > 45 ? "Sennin légendaire !" : score > 30 ? "Niveau Jônin !" : "Encore un peu d'entraînement...";
+    return (
+      <div className="p-4 text-center animate-fade-in">
+        <h2 className="text-2xl font-bold mb-2">Défi terminé !</h2>
+        <p className="mb-2">Score : {score} / {questionsDefi.length}</p>
+        <p className="mb-2">Temps restant : {Math.floor(timeLeft / 60)}m {timeLeft % 60}s</p>
+        <p className="mb-4 font-semibold">{message}</p>
+
+        {!submitted && (
+          <div className="mb-4">
+            <input
+              type="text"
+              placeholder="Ton nom (3-15 lettres)"
+              maxLength={15}
+              className="border p-2 rounded mb-2"
+              value={playerName}
+              onChange={e => setPlayerName(e.target.value)}
+            />
+            <button
+              onClick={saveScore}
+              className="bg-green-600 text-white py-2 px-4 ml-2 rounded hover:bg-green-700"
+            >
+              Sauvegarder le score
+            </button>
+          </div>
+        )}
+
+        {submitted && <p className="text-green-700 font-medium mb-4">Score enregistré dans le classement !</p>}
+
+        <button
+          onClick={() => window.location.reload()}
+          className="bg-blue-600 text-white py-2 px-4 rounded-xl hover:bg-blue-700"
+        >
+          Rejouer
+        </button>
+      </div>
+    );
+  }
+
+  const question = questionsDefi[currentQuestion];
+
+  return (
+    <div className="p-4 animate-fade-in">
+      <div className="flex justify-between items-center mb-4">
+        <span className="font-bold">Question {currentQuestion + 1} / {questionsDefi.length}</span>
+        <span className="text-red-500 font-mono">⏱️ {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}</span>
+      </div>
+      <h2 className="text-xl font-semibold mb-4">{question.question}</h2>
+      <div className="grid gap-2">
+        {question.answers.map((answer, index) => (
+          <button
+            key={index}
+            onClick={() => handleAnswer(index)}
+            className="bg-white border-2 border-gray-300 hover:border-blue-500 text-left p-2 rounded-xl transition-all duration-200"
+          >
+            {answer}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
